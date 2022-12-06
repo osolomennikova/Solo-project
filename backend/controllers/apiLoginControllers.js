@@ -8,7 +8,7 @@ exports.loginUser = async(req, res) => {
         const user = await User.findOne({ where: { email } });
         const passCheck = await bcrypt.compare(password, user.password);
         if (passCheck) {
-            req.session.currentUserName = user.username;
+            req.session.currentUserName = user.userName;
             req.session.currentUserId = user.id;
             req.session.save(() => {
                 res.send({message: "Login successful"});

@@ -13,6 +13,7 @@ const dbCheck = require('./db/dbCheck');
 // импорт роутов
 const apiRegistrationRoutes = require('./routes/apiRegistrationRoutes')
 const apiLoginRoutes = require('./routes/apiLoginRoutes')
+const apiLogoutRoutes = require('./routes/apiLogoutRoutes')
 
  // вызов функции проверки соединения с базоый данных
 dbCheck();
@@ -23,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const sessionConfig = {
-  name: 'chatCookie',
+    name: 'chatCookie',
   store: new FileStore(),
   secret: process.env.SECRET ?? 'mySecretPass',
   resave: false,
@@ -39,6 +40,7 @@ app.use(session(sessionConfig));
 //роутеры
 app.use('/', apiRegistrationRoutes);
 app.use('/', apiLoginRoutes);
+app.use('/', apiLogoutRoutes);
 
 const PORT = process.env.PORT || 3100;
 app.listen(PORT, (err) => {

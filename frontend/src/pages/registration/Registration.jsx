@@ -17,11 +17,11 @@ function Registration() {
                 name,
                 email,
                 password
-            }).then(res => res.json())
-                .then(data => {
-                    navigate("/");
-                })
-        })
+            })
+        }).then(res => res.json())
+            .then(data => {
+                navigate("/");
+            })
     }
 
     return (
@@ -29,10 +29,14 @@ function Registration() {
             <div className="bg-white flex flex-col p-8 shadow-2xl rounded">
                 <input value={name} onChange={(e) => setName(e.target.value)} type="text" placeholder="User name"
                        className="border-pink-200 border-2 outline-pink-500 focus:border-pink-500 p-3 w-[20rem] my-4 rounded text-pink-500"/>
-                <input value={email} onChange={(e) => {setEmail(e.target.value)}} type="email" placeholder="E-mail"
+                <input value={email} onChange={(e) => {
+                    setEmail(e.target.value)
+                }} type="email" placeholder="E-mail"
                        autoComplete="off"
                        className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
-                <input value={password} onChange={(e) => {setPassword(e.target.value)}} type="password"
+                <input value={password} onChange={(e) => {
+                    setPassword(e.target.value)
+                }} type="password"
                        placeholder="Password"
                        className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
                 <button onClick={handleSubmit}
