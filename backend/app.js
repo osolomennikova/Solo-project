@@ -11,7 +11,8 @@ const FileStore = require('session-file-store')(session);
 const dbCheck = require('./db/dbCheck');
 
 // импорт роутов
-const indexRoutes = require('./routes/indexRoutes');
+const apiRegistrationRoutes = require('./routes/apiRegistrationRoutes')
+const apiLoginRoutes = require('./routes/apiLoginRoutes')
 
  // вызов функции проверки соединения с базоый данных
 dbCheck();
@@ -36,7 +37,8 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 
 //роутеры
-app.use('/', indexRoutes);
+app.use('/', apiRegistrationRoutes);
+app.use('/', apiLoginRoutes);
 
 const PORT = process.env.PORT || 3100;
 app.listen(PORT, (err) => {
