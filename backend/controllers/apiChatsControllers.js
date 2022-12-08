@@ -5,29 +5,19 @@ exports.findOrCreateChat = async (req, res) => {
     try {
         const {userId} = req.body;
         const {currentUserId} = req.session;
-        const chat = await UserChat.findAll({
-            attributes: ['room_id'],
+        const chats = await UserChat.findAll({
+            attributes: ['room_id', [fn('COUNT', col('room_id')), 'count_users']],
             where: {
                 [Op.or]: [
                     {user_id: currentUserId},
                     {
                         user_id: userId
                     },
-                ]
+                ],
             },
             group: ['room_id'],
-            order: [[fn('count', col('user_id')), 'DESC']],
-            limit: 1,
         })
-        console.log(chat);
-        res.json({chat});
-        return;
-
-        const room = await Room.findOne({
-            where: {
-                id: chat.room_id
-            }
-        });
+        const room = chats.find(chat => chat.dataValues.count_users === "2");
         if (!room) {
             const newRoom = await Room.create();
             const {userName: currentUserName} = await User.findOne({
@@ -40,19 +30,33 @@ exports.findOrCreateChat = async (req, res) => {
                     id: userId
                 }
             });
-            await UserChat.create({
+            const {
+                id, chat_name
+            } = await UserChat.create({
                 user_id: currentUserId,
                 room_id: newRoom.id,
-                chat_name: currentUserName
+                chat_name: userName
             });
             await UserChat.create({
                 user_id: userId,
                 room_id: newRoom.id,
-                chat_name: userName
+                chat_name: currentUserName
             });
-            res.json({room: newRoom});
+            res.json({
+                id,
+                chat_name
+            });
         } else {
-            res.json({room});
+            const {id, chat_name} = await UserChat.findOne({
+                where: {
+                    room_id: room.dataValues.room_id,
+                    user_id: currentUserId
+                }
+            })
+            res.json({
+                id,
+                chat_name
+            });
         }
 
     } catch (error) {
