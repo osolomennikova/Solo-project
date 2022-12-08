@@ -1,22 +1,6 @@
-/*
-  This example requires Tailwind CSS v2.0+
-
-  This example requires some changes to your config:
-
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/forms'),
-    ],
-  }
-  ```
-*/
 import {Fragment, useState} from 'react'
 import {Dialog, Menu, Transition} from '@headlessui/react'
-import {Bars3CenterLeftIcon, Bars4Icon, ClockIcon, HomeIcon, XMarkIcon} from '@heroicons/react/24/outline'
+import {Bars3CenterLeftIcon, XMarkIcon} from '@heroicons/react/24/outline'
 import {
     ChevronUpDownIcon,
     MagnifyingGlassIcon,
@@ -24,57 +8,9 @@ import {
 import {useNavigate} from "react-router-dom";
 import io from "socket.io-client";
 import Chat from "../chat/Chat";
-
-const navigation = [
-    {name: 'Home', href: '#', icon: HomeIcon, current: true},
-    {name: 'My tasks', href: '#', icon: Bars4Icon, current: false},
-    {name: 'Recent', href: '#', icon: ClockIcon, current: false},
-]
-const teams = [
-    {name: 'Engineering', href: '#', bgColorClass: 'bg-indigo-500'},
-    {name: 'Human Resources', href: '#', bgColorClass: 'bg-green-500'},
-    {name: 'Customer Success', href: '#', bgColorClass: 'bg-yellow-500'},
-]
-const projects = [
-    {
-        id: 1,
-        title: 'GraphQL API',
-        initials: 'GA',
-        team: 'Engineering',
-        members: [
-            {
-                name: 'Dries Vincent',
-                handle: 'driesvincent',
-                imageUrl:
-                    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-            },
-            {
-                name: 'Lindsay Walton',
-                handle: 'lindsaywalton',
-                imageUrl:
-                    'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-            },
-            {
-                name: 'Courtney Henry',
-                handle: 'courtneyhenry',
-                imageUrl:
-                    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-            },
-            {
-                name: 'Tom Cook',
-                handle: 'tomcook',
-                imageUrl:
-                    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-            },
-        ],
-        totalMembers: 12,
-        lastUpdated: 'March 17, 2020',
-        pinned: true,
-        bgColorClass: 'bg-pink-600',
-    },
-    // More projects...
-]
-const pinnedProjects = projects.filter((project) => project.pinned)
+import Contacts from "./components/Contacts";
+import Chats from './components/Chats'
+import Search from "./components/Search";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -112,14 +48,6 @@ export default function Home() {
 
     return (
         <>
-            {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full">
-        ```
-      */}
             <div className="min-h-full">
                 <Transition.Root show={sidebarOpen} as={Fragment}>
                     <Dialog as="div" className="relative z-40 lg:hidden" onClose={setSidebarOpen}>
@@ -176,52 +104,8 @@ export default function Home() {
                                     </div>
                                     <div className="mt-5 h-0 flex-1 overflow-y-auto">
                                         <nav className="px-2">
-                                            <div className="space-y-1">
-                                                {navigation.map((item) => (
-                                                    <a
-                                                        key={item.name}
-                                                        href={item.href}
-                                                        className={classNames(
-                                                            item.current
-                                                                ? 'bg-gray-100 text-gray-900'
-                                                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
-                                                            'group flex items-center px-2 py-2 text-base leading-5 font-medium rounded-md'
-                                                        )}
-                                                        aria-current={item.current ? 'page' : undefined}
-                                                    >
-                                                        <item.icon
-                                                            className={classNames(
-                                                                item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                                                                'mr-3 flex-shrink-0 h-6 w-6'
-                                                            )}
-                                                            aria-hidden="true"
-                                                        />
-                                                        {item.name}
-                                                    </a>
-                                                ))}
-                                            </div>
-                                            <div className="mt-8">
-                                                <h3 className="px-3 text-sm font-medium text-gray-500"
-                                                    id="mobile-teams-headline">
-                                                    Teams
-                                                </h3>
-                                                <div className="mt-1 space-y-1" role="group"
-                                                     aria-labelledby="mobile-teams-headline">
-                                                    {teams.map((team) => (
-                                                        <a
-                                                            key={team.name}
-                                                            href={team.href}
-                                                            className="group flex items-center rounded-md px-3 py-2 text-base font-medium leading-5 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                                                        >
-                              <span
-                                  className={classNames(team.bgColorClass, 'w-2.5 h-2.5 mr-4 rounded-full')}
-                                  aria-hidden="true"
-                              />
-                                                            <span className="truncate">{team.name}</span>
-                                                        </a>
-                                                    ))}
-                                                </div>
-                                            </div>
+                                            <Chats/>
+                                            <Contacts/>
                                         </nav>
                                     </div>
                                 </Dialog.Panel>
@@ -368,71 +252,11 @@ export default function Home() {
                             </Transition>
                         </Menu>
                         {/* Sidebar Search */}
-                        <div className="mt-5 px-3">
-                            <label htmlFor="search" className="sr-only">
-                                Search
-                            </label>
-                            <div className="relative mt-1 rounded-md shadow-sm">
-                                <div
-                                    className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-                                    aria-hidden="true"
-                                >
-                                    <MagnifyingGlassIcon className="mr-3 h-4 w-4 text-gray-400" aria-hidden="true"/>
-                                </div>
-                                <input
-                                    type="text"
-                                    name="search"
-                                    id="search"
-                                    className="block w-full rounded-md border-gray-300 pl-9 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    placeholder="Search"
-                                />
-                            </div>
-                        </div>
+                        <Search />
                         {/* Navigation */}
                         <nav className="mt-6 px-3">
-                            <div className="space-y-1">
-                                {navigation.map((item) => (
-                                    <a
-                                        key={item.name}
-                                        href={item.href}
-                                        className={classNames(
-                                            item.current ? 'bg-gray-200 text-gray-900' : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50',
-                                            'group flex items-center px-2 py-2 text-sm font-medium rounded-md'
-                                        )}
-                                        aria-current={item.current ? 'page' : undefined}
-                                    >
-                                        <item.icon
-                                            className={classNames(
-                                                item.current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500',
-                                                'mr-3 flex-shrink-0 h-6 w-6'
-                                            )}
-                                            aria-hidden="true"
-                                        />
-                                        {item.name}
-                                    </a>
-                                ))}
-                            </div>
-                            <div className="mt-8">
-                                {/* Secondary navigation */}
-                                <h3 className="px-3 text-sm font-medium text-gray-500" id="desktop-teams-headline">
-                                    Teams
-                                </h3>
-                                <div className="mt-1 space-y-1" role="group" aria-labelledby="desktop-teams-headline">
-                                    {teams.map((team) => (
-                                        <a
-                                            key={team.name}
-                                            href={team.href}
-                                            className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                                        >
-                      <span
-                          className={classNames(team.bgColorClass, 'w-2.5 h-2.5 mr-4 rounded-full')}
-                          aria-hidden="true"
-                      />
-                                            <span className="truncate">{team.name}</span>
-                                        </a>
-                                    ))}
-                                </div>
-                            </div>
+                            <Chats/>
+                            <Contacts/>
                         </nav>
                     </div>
                 </div>
@@ -606,20 +430,20 @@ export default function Home() {
                         <div className="bg-white flex flex-col p-8 shadow-2xl rounded">
                             {!showChat ? (
                                 <>
-                            <input onChange={(e) => {
-                                setUsername(e.target.value)
-                            }} type="text" placeholder="Name"
-                                   className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
-                            <input onChange={(e) => {
-                                setRoom(e.target.value)
-                            }} type="text" placeholder="Room"
-                                   className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
-                            <button onClick={joinRoom}
-                                    className="rounded text-pink-500 outline-pink-500 focus:border-pink-500 my-4 w-auto">Join
-                                a chat
-                            </button>
+                                    <input onChange={(e) => {
+                                        setUsername(e.target.value)
+                                    }} type="text" placeholder="Name"
+                                           className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
+                                    <input onChange={(e) => {
+                                        setRoom(e.target.value)
+                                    }} type="text" placeholder="Room"
+                                           className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
+                                    <button onClick={joinRoom}
+                                            className="rounded text-pink-500 outline-pink-500 focus:border-pink-500 my-4 w-auto">Join
+                                        a chat
+                                    </button>
                                 </>) : (
-                            <Chat socket={socket} username={username} room={room}/>
+                                <Chat socket={socket} username={username} room={room}/>
                             )}
                         </div>
                     </main>

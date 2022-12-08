@@ -1,5 +1,4 @@
-exports.userLogout = async (req, res) => {
-    console.log(req.session)
+exports.userLogout = (req, res) => {
     try {
         if (req.session.currentUserName) {
             req.session.destroy(() => {
