@@ -1,11 +1,12 @@
 const router = require('express').Router();
 
-const {findOrCreateChat} = require("../controllers/apiChatsControllers");
+const {findOrCreateChat, findAllChatsForCurrentUser} = require("../controllers/apiChatsControllers");
 
 
 
 router
     .post('/chats', findOrCreateChat)
+    .get('/chats', findAllChatsForCurrentUser)
 
 
 module.exports = router;

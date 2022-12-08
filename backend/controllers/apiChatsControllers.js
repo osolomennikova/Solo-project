@@ -64,3 +64,25 @@ exports.findOrCreateChat = async (req, res) => {
     }
 
 };
+
+exports.findAllChatsForCurrentUser = async (req, res) => {
+    try{
+        if (req.session.currentUserName) {
+            const chats = await UserChat.findAll({
+                attributes: ['id', 'chat_name'],
+                where: {
+                    user_id: req.session.currentUserId
+                }
+            })
+            res.json({
+                chats
+            });
+        } else {
+            res.send({message: 'You have to be logged in to see all chats'});
+        }
+    } catch (error) {
+        res.status(500).send({message: error.message});
+    }
+}
+
+

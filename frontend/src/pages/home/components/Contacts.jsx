@@ -1,22 +1,18 @@
 import React, {useState, useEffect} from 'react';
 
 function Contacts() {
-    // state with contacts as array, default value is empty array
-    const [contacts, setContacts] = useState([]);
-    // useEffect to fetch contacts from API
+
+    const [chats, setChats] = useState([]);
+
     useEffect(() => {
-        // fetch contacts from API
-        // .then(
-        // setState contacts
-        // )
-        fetch('/users', {
+        fetch('/chats', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },
         }).then(res => res.json())
             .then(data => {
-                setContacts(data.users)
+                setChats(data.chats)
             })
     }, []);
 
@@ -27,20 +23,20 @@ function Contacts() {
                 Contacts
             </h3>
             <div className="mt-1 space-y-1" role="group" aria-labelledby="desktop-contacts-headline">
-                {contacts && contacts.map((contact) => (
-                    <ContactItem contact={contact}/>
+                {chats && chats.map((chat) => (
+                    <ContactItem chat={chat}/>
                 ))}
             </div>
         </div>
     );
 }
 
-function ContactItem({contact}) {
+function ContactItem({chat}) {
     return (
         <span
-            key={contact.id}
+            key={chat.id}
             onClick={() => {
-                console.log(contact.id, contact.userName)
+                console.log(chat.id, chat.chat_name)
             }}
             className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
         >
@@ -48,7 +44,7 @@ function ContactItem({contact}) {
                           className='w-2.5 h-2.5 mr-4 rounded-full bg-green-500'
                           aria-hidden="true"
                       />
-            <span className="truncate">{contact.userName}</span>
+            <span className="truncate">{chat.chat_name}</span>
         </span>
     );
 }
