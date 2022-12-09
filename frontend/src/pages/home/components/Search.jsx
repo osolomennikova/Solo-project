@@ -1,7 +1,7 @@
 import React from 'react';
 import AsyncSelect from 'react-select/async';
 
-function Search() {
+function Search({handleOpenChat}) {
 
     const promiseOptions = (inputValue) =>
         new Promise((resolve, reject) => {
@@ -34,8 +34,12 @@ function Search() {
                         },
                         body: JSON.stringify({
                             userId: option.id,
-                        }),
+                        })
                     })
+                        .then((response) => response.json())
+                        .then((json) => {
+                            handleOpenChat(json.id);
+                        })
                 }}
                 isClearable
             />

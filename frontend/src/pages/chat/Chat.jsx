@@ -1,17 +1,39 @@
 import React from 'react';
 import {useState, useEffect} from "react";
-import ScrollToBottom from "react-scroll-to-bottom";
+import ScrollToBottom,  {useScrollToBottom} from "react-scroll-to-bottom";
+import { css } from '@emotion/css';
+import io from "socket.io-client";
 
-function Chat({socket, username, room}) {
+function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}
 
+const ROOT_CSS = css({
+    height: window.innerHeight - 160,
+});
+
+function Chat({chatID}) {
     const [currentMessage, setCurrentMessage] = useState('');
     const [messages, setMessages] = useState([]);
+    const scrollToBottom = useScrollToBottom();
+    const userName = localStorage.getItem('userName') || "";
+    const [socket, setSocket] = useState(null);
+
+    useEffect(() => {
+        const socket = io('http://localhost:5000');
+        setSocket(socket);
+        return () => {
+            socket.close();
+        }
+    }, []);
 
     const sendMessage = async () => {
+        console.log('sendMessage');
+        scrollToBottom();
         if (currentMessage !== "") {
             const messageData = {
-                username: username,
-                room: room,
+                chatID,
+                userName,
                 message: currentMessage,
                 time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes()
             }
@@ -22,38 +44,59 @@ function Chat({socket, username, room}) {
     }
 
     useEffect(() => {
-        socket.on('receive_message', (data) => {
-            setMessages((messages) => [...messages, data]);
-        });
+        if (socket) {
+            socket.on('receive_message', (data) => {
+                setMessages((messages) => [...messages, data]);
+            })
+        }
     }, [socket]);
 
+    if (!chatID) {
+        return (
+            <div className="flex flex-col justify-center items-center h-full">
+                <h1 className="text-2xl text-gray-500">Please select a chat</h1>
+            </div>
+        )
+    }
 
     return (
-        <div>
-            <div className="chat-header">
-                <p>Live Chat</p>
+        <div className="">
+            <div className="p-4 border-b border-b-gray-400">
+                <p>Live Chat with {""}</p>
             </div>
-            <div className="chat-body">
-                <ScrollToBottom>
-                {messages.map((message, index) => {
-                    return (
-                        <div id={username === message.username ? "you" : "other"} key={index}>
-                            <div>
-                                <p>{message.message}</p>
+            <div className="">
+                <ScrollToBottom className={ROOT_CSS}>
+                    {messages.map((message, index) => {
+                        return (
+                            <div
+                                    className={
+                                        classNames(
+                                            userName === message.userName ? "text-right " : "text-left",
+                                            "w-full"
+                                        )}
+                                key={index}>
+                                <span
+                                    className={
+                                        classNames(
+                                            userName === message.userName ? " bg-amber-300" : "bg-violet-400",
+                                            "max-w-lg inline-block rounded-lg p-2 m-2"
+                                        )}
+                                >
+                                    <span>{message.message}</span>
+                                    <span>{message.time} </span>
+                                    <span>{message.username}</span>
+                                </span>
                             </div>
-                            <div>
-                                <p>{message.time} </p>
-                                <p>{message.username}</p>
-                            </div>
-                        </div>
-                    )
-                })}
+                        )
+                    })}
                 </ScrollToBottom>
             </div>
-            <div className="chat-footer">
+            <div className="px-4">
                 <input value={currentMessage} onChange={(e) => {
                     setCurrentMessage(e.target.value)
-                }} onKeyDown={(e) => {e.key === 'Enter' && sendMessage()}} type="text" placeholder="Hi!.."
+                }} onKeyDown={(e) => {
+                    e.key === 'Enter' && sendMessage()
+                }} type="text" placeholder="Hi!.."
                        className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
                 <button onClick={sendMessage}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"

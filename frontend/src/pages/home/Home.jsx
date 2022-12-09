@@ -6,7 +6,6 @@ import {
     MagnifyingGlassIcon,
 } from '@heroicons/react/20/solid'
 import {useNavigate} from "react-router-dom";
-import io from "socket.io-client";
 import Chat from "../chat/Chat";
 import Contacts from "./components/Contacts";
 import Chats from './components/Chats'
@@ -16,14 +15,12 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-const socket = io.connect('http://localhost:3100');
 
 export default function Home() {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const [username, setUsername] = useState('')
-    const [room, setRoom] = useState('')
-    const [showChat, setShowChat] = useState(false)
     const navigate = useNavigate();
+    const userName = localStorage.getItem('userName') || "";
+    const [chatID, setChatID] = useState(null);
 
     const handleClick = () => {
         fetch('/logout', {
@@ -38,12 +35,8 @@ export default function Home() {
         });
     }
 
-    const joinRoom = () => {
-        if (username !== "" && room !== "") {
-            socket.emit('join_room', room);
-            setShowChat(true);
-        }
-
+    const handleOpenChat = (chatID) => {
+        setChatID(chatID);
     }
 
     return (
@@ -105,7 +98,7 @@ export default function Home() {
                                     <div className="mt-5 h-0 flex-1 overflow-y-auto">
                                         <nav className="px-2">
                                             <Chats/>
-                                            <Contacts/>
+                                            <Contacts handleOpenChat={handleOpenChat}/>
                                         </nav>
                                     </div>
                                 </Dialog.Panel>
@@ -138,12 +131,11 @@ export default function Home() {
                     <span className="flex min-w-0 items-center justify-between space-x-3">
                       <img
                           className="h-10 w-10 flex-shrink-0 rounded-full bg-gray-300"
-                          src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80"
+                          src={`https://avatars.dicebear.com/api/bottts/${userName}.svg`}
                           alt=""
                       />
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate text-sm font-medium text-gray-900">Jessy Schwarz</span>
-                        <span className="truncate text-sm text-gray-500">@jessyschwarz</span>
+                        <span className="truncate text-sm font-medium text-gray-900">{userName}</span>
                       </span>
                     </span>
                     <ChevronUpDownIcon
@@ -236,15 +228,16 @@ export default function Home() {
                                     <div className="py-1">
                                         <Menu.Item>
                                             {({active}) => (
-                                                <a
-                                                    href="#"
+                                                <button
+                                                    onClick={handleClick}
+                                                    type="button"
                                                     className={classNames(
                                                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                                         'block px-4 py-2 text-sm'
                                                     )}
                                                 >
                                                     Logout
-                                                </a>
+                                                </button>
                                             )}
                                         </Menu.Item>
                                     </div>
@@ -252,11 +245,11 @@ export default function Home() {
                             </Transition>
                         </Menu>
                         {/* Sidebar Search */}
-                        <Search />
+                        <Search handleOpenChat={handleOpenChat}/>
                         {/* Navigation */}
                         <nav className="mt-6 px-3">
                             <Chats/>
-                            <Contacts/>
+                            <Contacts handleOpenChat={handleOpenChat}/>
                         </nav>
                     </div>
                 </div>
@@ -391,15 +384,15 @@ export default function Home() {
                                             <div className="py-1">
                                                 <Menu.Item>
                                                     {({active}) => (
-                                                        <a
-                                                            href="#"
-                                                            className={classNames(
-                                                                active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                                'block px-4 py-2 text-sm'
-                                                            )}
+                                                        <button onClick={handleClick}
+                                                                type="button"
+                                                                className={classNames(
+                                                                    active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                    'block px-4 py-2 text-sm'
+                                                                )}
                                                         >
                                                             Logout
-                                                        </a>
+                                                        </button>
                                                     )}
                                                 </Menu.Item>
                                             </div>
@@ -409,43 +402,8 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
-                    <main className="flex-1">
-                        {/* Page title & actions */}
-                        <div
-                            className="border-b border-gray-200 px-2 py-2 sm:flex sm:items-center sm:justify-between sm:px-4 lg:px-6">
-                            <div className="min-w-0 flex-1">
-                                <h1 className="text-md font-medium leading-4 text-gray-900 sm:truncate">olity</h1>
-                            </div>
-                            <div className="mt-4 flex sm:mt-0 sm:ml-4">
-                                <button
-                                    onClick={handleClick}
-                                    type="button"
-                                    className="sm:order-0 order-1 ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 sm:ml-0"
-                                >
-                                    Logout
-                                </button>
-                            </div>
-                        </div>
-                        <h3 className="text-center my-4">Join a chat</h3>
-                        <div className="bg-white flex flex-col p-8 shadow-2xl rounded">
-                            {!showChat ? (
-                                <>
-                                    <input onChange={(e) => {
-                                        setUsername(e.target.value)
-                                    }} type="text" placeholder="Name"
-                                           className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
-                                    <input onChange={(e) => {
-                                        setRoom(e.target.value)
-                                    }} type="text" placeholder="Room"
-                                           className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
-                                    <button onClick={joinRoom}
-                                            className="rounded text-pink-500 outline-pink-500 focus:border-pink-500 my-4 w-auto">Join
-                                        a chat
-                                    </button>
-                                </>) : (
-                                <Chat socket={socket} username={username} room={room}/>
-                            )}
-                        </div>
+                    <main className="">
+                        <Chat chatID={chatID}/>
                     </main>
                 </div>
             </div>

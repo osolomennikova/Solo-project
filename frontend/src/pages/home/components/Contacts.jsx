@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 
-function Contacts() {
+function Contacts({handleOpenChat}) {
 
     const [chats, setChats] = useState([]);
 
@@ -24,21 +24,21 @@ function Contacts() {
             </h3>
             <div className="mt-1 space-y-1" role="group" aria-labelledby="desktop-contacts-headline">
                 {chats && chats.map((chat) => (
-                    <ContactItem chat={chat}/>
+                    <ContactItem chat={chat} handleOpenChat={handleOpenChat}/>
                 ))}
             </div>
         </div>
     );
 }
 
-function ContactItem({chat}) {
+function ContactItem({chat, handleOpenChat}) {
     return (
         <span
             key={chat.id}
             onClick={() => {
-                console.log(chat.id, chat.chat_name)
+                handleOpenChat(chat.id);
             }}
-            className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+            className="cursor-pointer group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
         >
                       <span
                           className='w-2.5 h-2.5 mr-4 rounded-full bg-green-500'

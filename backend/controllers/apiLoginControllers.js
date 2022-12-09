@@ -11,7 +11,7 @@ exports.loginUser = async(req, res) => {
             req.session.currentUserName = user.userName;
             req.session.currentUserId = user.id;
             req.session.save(() => {
-                res.send({message: "Login successful"});
+                res.json({ userName: user.userName });
             });
         } else {
             res.send({message: "Incorrect email or password"});
