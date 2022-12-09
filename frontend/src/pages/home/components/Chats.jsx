@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 
-function Contacts({handleOpenChat}) {
+function Chats({handleOpenChat}) {
 
     const [chats, setChats] = useState([]);
 
@@ -51,14 +51,14 @@ function Contacts({handleOpenChat}) {
             </h3>
             <div className="mt-1 space-y-1" role="group" aria-labelledby="desktop-contacts-headline">
                 {chats && chats.map((chat) => (
-                    <ContactItem chat={chat} handleOpenGroupChat={handleOpenGroupChat}/>
+                    <ChatItem chat={chat} handleOpenGroupChat={handleOpenGroupChat}/>
                 ))}
             </div>
         </div>
     );
 }
 
-function ContactItem({chat, handleOpenGroupChat}) {
+function ChatItem({chat, handleOpenGroupChat}) {
     return (
         <span
             key={chat.id}
@@ -76,4 +76,4 @@ function ContactItem({chat, handleOpenGroupChat}) {
     );
 }
 
-export default Contacts;
+export default Chats;

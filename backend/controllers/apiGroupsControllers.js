@@ -1,3 +1,4 @@
+const {Op} = require('sequelize');
 const {UserChat, Room} = require('../db/models');
 
 exports.findOrCreateGroup = async (req, res) => {
