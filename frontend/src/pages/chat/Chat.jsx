@@ -33,6 +33,7 @@ function Chat({chatID}) {
     }, [chatID]);
 
     useEffect(() => {
+        if (!chatID) return;
         fetch(`/chats/${chatID}`, {
             method: 'GET',
             headers: {

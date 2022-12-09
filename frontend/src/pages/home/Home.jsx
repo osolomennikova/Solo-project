@@ -3,7 +3,6 @@ import {Dialog, Menu, Transition} from '@headlessui/react'
 import {Bars3CenterLeftIcon, XMarkIcon} from '@heroicons/react/24/outline'
 import {
     ChevronUpDownIcon,
-    MagnifyingGlassIcon,
 } from '@heroicons/react/20/solid'
 import {useNavigate} from "react-router-dom";
 import Chat from "../chat/Chat";
@@ -98,7 +97,7 @@ export default function Home() {
                                     </Transition.Child>
                                     <div className="mt-5 h-0 flex-1 overflow-y-auto">
                                         <nav className="px-2">
-                                            <Chats/>
+                                            <Chats handleOpenChat={handleOpenChat}/>
                                             <Contacts handleOpenChat={handleOpenChat}/>
                                         </nav>
                                     </div>
@@ -172,7 +171,7 @@ export default function Home() {
                         <Search handleOpenChat={handleOpenChat}/>
                         {/* Navigation */}
                         <nav className="mt-6 px-3">
-                            <Chats/>
+                            <Chats handleOpenChat={handleOpenChat}/>
                             <Contacts handleOpenChat={handleOpenChat}/>
                         </nav>
                     </div>

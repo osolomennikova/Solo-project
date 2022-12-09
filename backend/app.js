@@ -20,6 +20,7 @@ const apiLoginRoutes = require('./routes/apiLoginRoutes')
 const apiLogoutRoutes = require('./routes/apiLogoutRoutes')
 const apiUsersRoutes = require('./routes/apiUsersRoutes')
 const apiChatsRoutes = require('./routes/apiChatsRoutes')
+const apiGroupsRoutes = require('./routes/apiGroupsRoutes')
 
 // вызов функции проверки соединения с базоый данных
 dbCheck();
@@ -81,6 +82,7 @@ app.use('/', apiLoginRoutes);
 app.use('/', apiLogoutRoutes);
 app.use('/', apiUsersRoutes);
 app.use('/', apiChatsRoutes);
+app.use('/', apiGroupsRoutes);
 
 const PORT = process.env.PORT || 3100;
 server.listen(PORT, (err) => {
