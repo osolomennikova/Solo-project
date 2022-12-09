@@ -57,7 +57,7 @@ function Chat({chatID}) {
         if (currentMessage !== "") {
             const messageData = {
                 chatID,
-                our_id: ourId,
+                user_id: ourId,
                 message: currentMessage,
                 time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes()
             }
