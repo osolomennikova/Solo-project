@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   class Room extends Model {
     static associate(models) {
       this.hasMany(models.UserChat, {foreignKey: 'room_id'});
+      this.hasMany(models.History, {foreignKey: 'room_id'});
     }
   }
   Room.init({
