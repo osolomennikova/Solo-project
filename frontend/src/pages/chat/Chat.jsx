@@ -1,7 +1,7 @@
 import React from 'react';
 import {useState, useEffect} from "react";
-import ScrollToBottom,  {useScrollToBottom} from "react-scroll-to-bottom";
-import { css } from '@emotion/css';
+import ScrollToBottom, {useScrollToBottom} from "react-scroll-to-bottom";
+import {css} from '@emotion/css';
 import io from "socket.io-client";
 import InputEmoji from 'react-input-emoji';
 
@@ -21,6 +21,7 @@ function Chat({chatID}) {
     const [socket, setSocket] = useState(null);
     const [chatName, setChatName] = useState("");
     const [ourId, setOurId] = useState("");
+    const [isPublic, setIsPublic] = useState(false);
 
     useEffect(() => {
         if (!chatID) return;
@@ -49,6 +50,7 @@ function Chat({chatID}) {
             setMessages(data.messages);
             setChatName(data.chat_name);
             setOurId(data.our_id);
+            setIsPublic(data.isPublic);
         })
 
         // {messages:[], chat_name: "Main public"}
@@ -61,7 +63,8 @@ function Chat({chatID}) {
                 chatID,
                 user_id: ourId,
                 message: currentMessage,
-                time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes()
+                time: new Date(Date.now()).toLocaleString(),
+                user_name: userName,
             }
             await socket.emit('send_message', messageData);
             setMessages((messages) => [...messages, messageData]);
@@ -100,11 +103,11 @@ function Chat({chatID}) {
                     {messages.map((message, index) => {
                         return (
                             <div
-                                    className={
-                                        classNames(
-                                            ourId === message.user_id ? "text-right " : "text-left",
-                                            "w-full"
-                                        )}
+                                className={
+                                    classNames(
+                                        ourId === message.user_id ? "text-right " : "text-left",
+                                        "w-full"
+                                    )}
                                 key={index}>
                                 <span
                                     className={
@@ -113,8 +116,13 @@ function Chat({chatID}) {
                                             "max-w-lg inline-block rounded-lg p-3 m-4"
                                         )}
                                 >
+                                    {isPublic && ourId !== message.user_id && (
+                                        <span
+                                            className="block font-sans text-xs text-slate-500">{message.user_name}</span>
+                                    )}
                                     <span className="font-sans text-base">{message.message}</span>
-                                    <span className=" block font-sans text-xs text-slate-500">{new Date(message.time).getHours() + ":" + new Date(message.time).getMinutes()} </span>
+                                    <span
+                                        className="block font-sans text-xs text-slate-500">{new Date(message.time).getHours() + ":" + new Date(message.time).getMinutes()} </span>
                                 </span>
                             </div>
                         )

@@ -94,9 +94,18 @@ exports.findHistoryForChat = async (req, res) => {
                     id
                 }
             })
+            const room = await Room.findOne({
+                where: {
+                    id: room_id
+                }
+            });
+
             const histories = await History.findAll({
                 where: {
                     room_id
+                },
+                include: {
+                    model: User,
                 }
             })
             res.json({
@@ -104,8 +113,10 @@ exports.findHistoryForChat = async (req, res) => {
                     message: history.dataValues.message,
                     time: history.dataValues.createdAt,
                     user_id: history.dataValues.user_id,
+                    user_name: history.dataValues.User.dataValues.userName
                 })),
                 chat_name,
+                isPublic: !!room.dataValues.room_name,
                 our_id: req.session.currentUserId,
             });
         } else {

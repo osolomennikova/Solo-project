@@ -5,6 +5,10 @@ function Contacts({handleOpenChat}) {
     const [chats, setChats] = useState([]);
 
     useEffect(() => {
+        fetchChats();
+    }, []);
+
+    const fetchChats = () => {
         fetch('/chats', {
             method: 'GET',
             headers: {
@@ -14,7 +18,7 @@ function Contacts({handleOpenChat}) {
             .then(data => {
                 setChats(data.chats)
             })
-    }, []);
+    }
 
 
     return (

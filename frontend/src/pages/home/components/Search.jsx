@@ -25,7 +25,6 @@ function Search({handleOpenChat}) {
                 getOptionLabel={(option) => option.userName}
                 getOptionValue={(option) => option.id}
                 onChange={(option) => {
-                    console.log(option.id);
                     fetch(`/chats`, {
                         method: 'POST',
                         headers: {
