@@ -29,6 +29,17 @@ function Chat({chatID}) {
         }
     }, [chatID]);
 
+    useEffect(() => {
+        fetch(`/chats/${chatID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        // {messages:[], chat_name: "Main public"}
+    }, [chatID]);
+
     const sendMessage = async () => {
         scrollToBottom();
         if (currentMessage !== "") {
@@ -79,29 +90,29 @@ function Chat({chatID}) {
                                 <span
                                     className={
                                         classNames(
-                                            userName === message.userName ? " bg-amber-300" : "bg-violet-400",
-                                            "max-w-lg inline-block rounded-lg p-2 m-2"
+                                            userName === message.userName ? "bg-amber-200" : "bg-violet-200",
+                                            "max-w-lg inline-block rounded-lg p-3 m-4"
                                         )}
                                 >
-                                    <span>{message.message}</span>
-                                    <span>{message.time} </span>
-                                    <span>{message.username}</span>
+                                    <span className="font-sans text-base">{message.message}</span>
+                                    <span className=" block font-serif text-xs text-slate-500">{message.time} </span>
+                                    <span className="">{message.username}</span>
                                 </span>
                             </div>
                         )
                     })}
                 </ScrollToBottom>
             </div>
-            <div className="px-4">
+            <div className="px-4 flex justify-between">
                 <input value={currentMessage} onChange={(e) => {
                     setCurrentMessage(e.target.value)
                 }} onKeyDown={(e) => {
                     e.key === 'Enter' && sendMessage()
                 }} type="text" placeholder="Hi!.."
-                       className="border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
+                       className="w-full border-pink-200 outline-pink-500 focus:border-pink-500 border-2 p-3 my-4 rounded text-pink-500"/>
                 <button onClick={sendMessage}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-                         stroke="currentColor" className="w-6 h-6">
+                         stroke="currentColor" className="w-6 h-6 ml-4">
                         <path strokeLinecap="round" strokeLinejoin="round"
                               d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
                     </svg>

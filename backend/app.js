@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
     });
     socket.on("send_message", async (data) => {
         const chat = await UserChat.findOne({where: {id: data.chatID}});
-        console.log(chat.dataValues.room_id);
+        // history
         socket.to(chat.dataValues.room_id).emit("receive_message", data)
     });
     socket.on('disconnect', () => {
