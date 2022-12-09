@@ -4,7 +4,7 @@ import Login from "./pages/login/Login"
 
 
 import {
-    Routes, Route
+    Routes, Route, Navigate
 } from "react-router-dom";
 
 
@@ -12,13 +12,12 @@ import {
 function App() {
     return (
         <>
-            <Routes>
-                <Route path="/registration" element={<Registration/>}/>
-                <Route path="/login" element={<Login/>}/>
-            </Routes>
             <div>
                 <Routes>
+                    <Route path="/registration" element={<Registration/>}/>
+                    <Route path="/login" element={<Login/>}/>
                     <Route path="/" element={<Home/>}/>
+                    <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             </div>
         </>

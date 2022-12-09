@@ -77,8 +77,8 @@ function Chat({chatID}) {
 
     if (!chatID) {
         return (
-            <div className="flex flex-col justify-center items-center h-full">
-                <h1 className="text-2xl text-gray-500">Please select a chat</h1>
+            <div className="grid content-center w-full h-screen">
+                <h1 className="text-2xl text-gray-500 text-center">Please select a chat or search new contacts ...</h1>
             </div>
         )
     }
@@ -86,7 +86,12 @@ function Chat({chatID}) {
     return (
         <div className="">
             <div className="p-4 border-b border-b-gray-400">
-                <p>Live Chat with {chatName}</p>
+                <img
+                    className="h-6 w-6 flex-shrink-0 rounded-full bg-gray-300 inline"
+                    src={`https://avatars.dicebear.com/api/bottts/${chatName}.svg`}
+                    alt=""
+                />
+                <span className="ml-2 font-bold text-violet-800">{chatName}</span>
             </div>
             <div className="">
                 <ScrollToBottom className={ROOT_CSS}>

@@ -1,4 +1,4 @@
-import {Fragment, useState} from 'react'
+import {Fragment, useState, useEffect} from 'react'
 import {Dialog, Menu, Transition} from '@headlessui/react'
 import {Bars3CenterLeftIcon, XMarkIcon} from '@heroicons/react/24/outline'
 import {
@@ -22,6 +22,13 @@ export default function Home() {
     const userName = localStorage.getItem('userName') || "";
     const [chatID, setChatID] = useState(null);
 
+    useEffect(() => {
+        if (!userName) {
+            navigate('/login');
+        }
+    }, []);
+
+
     const handleClick = () => {
         fetch('/logout', {
             method: 'POST',
@@ -31,6 +38,7 @@ export default function Home() {
         }).then((res) => {
             if (res.ok) {
                 navigate('/login');
+                localStorage.removeItem('userName');
             }
         });
     }
