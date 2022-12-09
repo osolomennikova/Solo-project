@@ -20,15 +20,16 @@ function Chat({chatID}) {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        const socket = io('http://localhost:5000');
+        if (!chatID) return;
+        const socket = io('http://localhost:3100');
+        socket.emit('join_contact', {chatID});
         setSocket(socket);
         return () => {
             socket.close();
         }
-    }, []);
+    }, [chatID]);
 
     const sendMessage = async () => {
-        console.log('sendMessage');
         scrollToBottom();
         if (currentMessage !== "") {
             const messageData = {

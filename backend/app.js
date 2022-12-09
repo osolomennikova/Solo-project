@@ -9,6 +9,7 @@ const FileStore = require('session-file-store')(session);
 const http = require('http');
 const cors = require('cors');
 const {Server} = require('socket.io');
+const {UserChat} = require('./db/models');
 
 //импорт вспомогательных ф-й
 const dbCheck = require('./db/dbCheck');
@@ -40,30 +41,19 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
     console.log(socket.id);
-    socket.on("join_contact", (user_Id) => {
-        // findOne room
-        // ourId and userId
-        //   \        /
-        //    \      /
-        //     \    /
-        //      \  /
-        //       \/
-        //      room
-        // if room exist
-        // join room
-        //  else
-        // create room
-        // join room
-        socket.join(roomName)
-        console.log(`User with ID ${socket.id} joined room ${roomName}`)
+    socket.on("join_contact", async ({chatID}) => {
+        const chat = await UserChat.findOne({where: {id: chatID}});
+        console.log(chat.dataValues.room_id);
+        socket.join(chat.dataValues.room_id);
     });
     socket.on("join_room", (roomName) => {
         console.log(`User with ID ${socket.id} joined room ${roomName}`)
         socket.join(roomName)
     });
-    socket.on("send_message", (data) => {
-        console.log(data)
-        socket.to(data.room).emit("receive_message", data)
+    socket.on("send_message", async (data) => {
+        const chat = await UserChat.findOne({where: {id: data.chatID}});
+        console.log(chat.dataValues.room_id);
+        socket.to(chat.dataValues.room_id).emit("receive_message", data)
     });
     socket.on('disconnect', () => {
         console.log('user disconnected', socket.id);
