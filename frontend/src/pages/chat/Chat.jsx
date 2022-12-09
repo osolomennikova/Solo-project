@@ -113,8 +113,7 @@ function Chat({chatID}) {
                                         )}
                                 >
                                     <span className="font-sans text-base">{message.message}</span>
-                                    <span className=" block font-serif text-xs text-slate-500">{message.time} </span>
-                                    <span className="">{message.username}</span>
+                                    <span className=" block font-sans text-xs text-slate-500">{new Date(message.time).getHours() + ":" + new Date(message.time).getMinutes()} </span>
                                 </span>
                             </div>
                         )

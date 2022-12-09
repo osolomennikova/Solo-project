@@ -17,7 +17,7 @@ function Search({handleOpenChat}) {
         });
 
     return (
-        <div className="p-2">
+        <div className="p-2 w-full">
             <AsyncSelect
                 value={null}
                 loadOptions={promiseOptions}
