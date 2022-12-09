@@ -109,6 +109,13 @@ function Chat({chatID}) {
                                         "w-full"
                                     )}
                                 key={index}>
+                                {isPublic && ourId !== message.user_id && (
+                                    <img
+                                        className="ml-2 mb-8 h-6 w-6 flex-shrink-0 rounded-full bg-gray-300 inline"
+                                        src={`https://avatars.dicebear.com/api/bottts/${message.user_name}.svg`}
+                                        alt=""
+                                    />
+                                )}
                                 <span
                                     className={
                                         classNames(
