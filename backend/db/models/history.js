@@ -5,8 +5,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class History extends Model {
     static associate(models) {
-     this.belongsTo(models.Room, {foreignKey: 'room_id'})
-      this.belongsTo(models.User, {foreignKey: 'user_id'})
+
     }
   }
   History.init({

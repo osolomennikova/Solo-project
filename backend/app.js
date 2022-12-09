@@ -9,7 +9,7 @@ const FileStore = require('session-file-store')(session);
 const http = require('http');
 const cors = require('cors');
 const {Server} = require('socket.io');
-const {UserChat} = require('./db/models');
+const {UserChat, History} = require('./db/models');
 
 //импорт вспомогательных ф-й
 const dbCheck = require('./db/dbCheck');
@@ -52,6 +52,7 @@ io.on('connection', (socket) => {
     });
     socket.on("send_message", async (data) => {
         const chat = await UserChat.findOne({where: {id: data.chatID}});
+        const history = await History.create({room_id: chat.dataValues.room_id, message: data.message, user_id: chat.dataValues.user_id});
         // history
         socket.to(chat.dataValues.room_id).emit("receive_message", data)
     });
