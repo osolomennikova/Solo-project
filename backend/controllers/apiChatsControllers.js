@@ -1,5 +1,5 @@
 const {Op, fn, col} = require('sequelize');
-const {User, UserChat, Room} = require('../db/models');
+const {User, UserChat, Room, History} = require('../db/models');
 
 exports.findOrCreateChat = async (req, res) => {
     try {
@@ -66,7 +66,7 @@ exports.findOrCreateChat = async (req, res) => {
 };
 
 exports.findAllChatsForCurrentUser = async (req, res) => {
-    try{
+    try {
         if (req.session.currentUserName) {
             const chats = await UserChat.findAll({
                 attributes: ['id', 'chat_name'],
@@ -76,6 +76,37 @@ exports.findAllChatsForCurrentUser = async (req, res) => {
             })
             res.json({
                 chats
+            });
+        } else {
+            res.send({message: 'You have to be logged in to see all chats'});
+        }
+    } catch (error) {
+        res.status(500).send({message: error.message});
+    }
+}
+
+exports.findHistoryForChat = async (req, res) => {
+    try {
+        if (req.session.currentUserName) {
+            const {id} = req.params;
+            const {room_id, chat_name} = await UserChat.findOne({
+                where: {
+                    id
+                }
+            })
+            const histories = await History.findAll({
+                where: {
+                    room_id
+                }
+            })
+            res.json({
+                messages: histories.map(history => ({
+                    message: history.dataValues.message,
+                    time: history.dataValues.createdAt,
+                    user_id: history.dataValues.user_id,
+                })),
+                chat_name,
+                our_id: req.session.currentUserId,
             });
         } else {
             res.send({message: 'You have to be logged in to see all chats'});

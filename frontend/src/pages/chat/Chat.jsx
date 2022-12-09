@@ -18,6 +18,8 @@ function Chat({chatID}) {
     const scrollToBottom = useScrollToBottom();
     const userName = localStorage.getItem('userName') || "";
     const [socket, setSocket] = useState(null);
+    const [chatName, setChatName] = useState("");
+    const [ourId, setOurId] = useState("");
 
     useEffect(() => {
         if (!chatID) return;
@@ -35,6 +37,16 @@ function Chat({chatID}) {
             headers: {
                 'Content-Type': 'application/json'
             }
+        }).then((res) => {
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                throw new Error(res.statusText);
+            }
+        }).then((data) => {
+            setMessages(data.messages);
+            setChatName(data.chat_name);
+            setOurId(data.our_id);
         })
 
         // {messages:[], chat_name: "Main public"}
@@ -45,7 +57,7 @@ function Chat({chatID}) {
         if (currentMessage !== "") {
             const messageData = {
                 chatID,
-                userName,
+                our_id: ourId,
                 message: currentMessage,
                 time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes()
             }
@@ -74,7 +86,7 @@ function Chat({chatID}) {
     return (
         <div className="">
             <div className="p-4 border-b border-b-gray-400">
-                <p>Live Chat with {""}</p>
+                <p>Live Chat with {chatName}</p>
             </div>
             <div className="">
                 <ScrollToBottom className={ROOT_CSS}>
@@ -83,14 +95,14 @@ function Chat({chatID}) {
                             <div
                                     className={
                                         classNames(
-                                            userName === message.userName ? "text-right " : "text-left",
+                                            ourId === message.user_id ? "text-right " : "text-left",
                                             "w-full"
                                         )}
                                 key={index}>
                                 <span
                                     className={
                                         classNames(
-                                            userName === message.userName ? "bg-amber-200" : "bg-violet-200",
+                                            ourId === message.user_id ? "bg-amber-200" : "bg-violet-200",
                                             "max-w-lg inline-block rounded-lg p-3 m-4"
                                         )}
                                 >
