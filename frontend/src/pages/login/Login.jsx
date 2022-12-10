@@ -50,8 +50,8 @@ function Login() {
                 <button onClick={handleSubmit}
                         className="rounded text-pink-500 outline-pink-500 focus:border-pink-500 my-4 w-auto">Login
                 </button>
-                <button onClick={() => navigate("/register")}
-                        className="rounded text-pink-500 outline-pink-500 focus:border-pink-500 my-4 w-auto">Register
+                <button onClick={() => navigate("/registration")}
+                        className="rounded text-pink-500 outline-pink-500 focus:border-pink-500 my-4 w-auto">Registration
                 </button>
 
                 </div>

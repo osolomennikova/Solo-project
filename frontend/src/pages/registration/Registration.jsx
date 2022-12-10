@@ -20,6 +20,7 @@ function Registration() {
             })
         }).then(res => res.json())
             .then(data => {
+                localStorage.setItem('userName', data.userName)
                 navigate("/");
             })
     }

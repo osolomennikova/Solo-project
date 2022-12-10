@@ -10,7 +10,7 @@ exports.registerUser = async (req, res) => {
         req.session.currentUserName = newUser.userName;
         req.session.currentUserId = newUser.id;
         req.session.save(() => {
-            res.send({ message: "User created successfully" });
+            res.json({ userName: newUser.userName });
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
